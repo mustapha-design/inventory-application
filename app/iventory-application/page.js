@@ -2,12 +2,16 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { QRCodeSVG } from 'qrcode.react';
 
-const categories = ['Food Stuff', 'Snacks', 'Mobile', 'Clothes'];
 
 export default function Home() {
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get('category');
+  
+  
+  const [viewProduct, setViewProduct] = useState(null);
+  const categories = ['Food Stuff', 'Snacks', 'Mobile', 'Clothes'];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [itemName, setItemName] = useState('');
@@ -100,7 +104,11 @@ export default function Home() {
   {filteredProducts
     .filter(p => p.itemName.toLowerCase().includes(searchQuery.toLowerCase()))
     .map((product) => (
-      <div key={product.id} className="bg-white p-4 rounded shadow-md">
+      <div
+          key={product.id}
+          className="bg-white p-4 rounded shadow-md cursor-pointer"
+          onClick={() => setViewProduct(product)}
+        >
         <h2 className="text-xl font-bold text-gray-600">{product.itemName}</h2>
         <p className="text-gray-600">Category: {product.category}</p>
         <p className="text-gray-600">Price: ₦{product.price}</p>
@@ -127,7 +135,11 @@ export default function Home() {
       {filteredProducts
         .filter(p => p.itemName.toLowerCase().includes(searchQuery.toLowerCase()))
         .map((product, index) => (
-          <tr key={product.id} className="border-b hover:bg-gray-50 transition">
+          <tr
+              key={product.id}
+              className="border-b hover:bg-gray-50 transition cursor-pointer"
+              onClick={() => setViewProduct(product)}
+            >
             <td className="p-3 text-gray-900">{index + 1}</td>
             <td className="p-3 text-gray-600">{product.itemName}</td>
             <td className="p-3 text-gray-600">{product.quantity}</td>
@@ -181,6 +193,58 @@ export default function Home() {
           </div>
         </div>
       )}
+{viewProduct && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col items-center">
+      <h2 className="text-xl font-bold text-gray-700 mb-4">Product Details</h2>
+
+      <p className="mb-2 text-gray-600">
+        <strong>Name:</strong> {viewProduct.itemName}
+      </p>
+
+      <p className="mb-2 text-gray-600">
+        <strong>Quantity:</strong> {viewProduct.quantity}
+      </p>
+
+      <p className="mb-4 text-gray-600">
+        <strong>Category:</strong> {viewProduct.category}
+      </p>
+
+      {/* QR Code */}
+      <div className="mb-4">
+        <QRCodeSVG
+          value={JSON.stringify({
+            name: viewProduct.itemName,
+            quantity: viewProduct.quantity,
+            category: viewProduct.category,
+          })}
+          size={150}
+          includeMargin={true}
+        />
+      </div>
+
+      <div className="flex justify-between w-full">
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+          onClick={() => setViewProduct(null)}
+        >
+          Cancel
+        </button>
+
+        <button
+          className="bg-red-600 text-white px-4 py-2 rounded"
+          onClick={() => {
+            handleDelete(viewProduct.id);
+            setViewProduct(null);
+          }}
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       <footer className="fixed bottom-0 left-0 w-full bg-gray-200 py-2 text-center text-sm text-gray-600">
   <p>&copy; 2024 Mustapha Mohammed. All rights reserved.</p>
   <p>
