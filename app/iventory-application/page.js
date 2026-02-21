@@ -87,16 +87,37 @@ export default function Home() {
   
 };
 
+const handleSaveUpload = () => {
+  if (excelData.length === 0) {
+    alert("No data to save");
+    return;
+  }
+
+  const formattedProducts = excelData.map((row) => ({
+    id: Date.now() + Math.random(),
+    itemName: row["Item Name"],
+    quantity: Number(row["Quantity"]),
+    category: row["Category"],
+    price: 0,
+  }));
+
+  setProducts((prev) => [...prev, ...formattedProducts]);
+  setExcelData([]);
+  setBatchFile(null);
+  setIsModalOpen(false);
+};
+
+
 
 const handleDownloadFormat = () => {
-  // 1️⃣ Create sample data with only headers
+  //Create sample data with only headers
   const data = [
     ["S/N", "Item Name", "Quantity", "Category"],
   ];
 
   
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(data); // convert array of arrays to sheet
+  const ws = XLSX.utils.aoa_to_sheet(data); 
   XLSX.utils.book_append_sheet(wb, ws, "Products");
 
   
@@ -321,8 +342,7 @@ const handleDownloadFormat = () => {
           </div>
 
          {/* ===== BATCH UPLOAD ===== */}
-<div className="w-full shrink-0 text-gray-800 mx-auto items-center">
-  <button
+<div className="w-full shrink-0 text-gray-800 mx-auto items-center max-h-[60vh] overflow-y-auto">  <button
     className="p-1 px-2 cursor-pointer bg-blue-500 rounded-lg text-white mb-4"
     onClick={handleDownloadFormat}
   >
@@ -356,32 +376,43 @@ const handleDownloadFormat = () => {
 
   {/* ✅ TABLE MUST BE HERE */}
   {excelData.length > 0 && (
-    <div className="mt-4 overflow-x-auto">
-      <table className="w-full border border-gray-300 text-sm">
-        <thead className="bg-gray-200">
-          <tr>
-            {Object.keys(excelData[0]).map((key) => (
-              <th key={key} className="border p-2">
-                {key}
-              </th>
+  <div className="mt-4 overflow-x-auto">
+    <table className="w-full border border-gray-300 text-sm">
+      <thead className="bg-gray-200">
+        <tr>
+          {Object.keys(excelData[0]).map((key) => (
+            <th key={key} className="border p-2">
+              {key}
+            </th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody>
+        {excelData.map((row, index) => (
+          <tr key={index}>
+            {Object.values(row).map((value, i) => (
+              <td key={i} className="border p-2 text-center">
+                {value}
+              </td>
             ))}
           </tr>
-        </thead>
+        ))}
+      </tbody>
+    </table>
 
-        <tbody>
-          {excelData.map((row, index) => (
-            <tr key={index}>
-              {Object.values(row).map((value, i) => (
-                <td key={i} className="border p-2 text-center">
-                  {value}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    {/* ✅ SAVE UPLOAD BUTTON */}
+    <div className="flex justify-end mt-3">
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        onClick={handleSaveUpload}
+      >
+        Save Upload
+      </button>
     </div>
-  )}
+  </div>
+)}
+
 </div>
 
 
