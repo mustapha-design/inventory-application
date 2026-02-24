@@ -6,18 +6,22 @@ import { QRCodeSVG } from 'qrcode.react';
 import { CloudUpload } from 'lucide-react';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useRouter } from "next/navigation";
+
 
 
 export default function Home() {
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get('category');
   
+  const [username, setUsername] = useState(""); 
+  
   const [uploadMode, setUploadMode] = useState("single"); // "single" | "batch"
   const [batchFile, setBatchFile] = useState(null);
   const [excelData, setExcelData] = useState([]);
-  const reader = new FileReader();
+  // const reader = new FileReader();
 
-
+  const router = useRouter();
 
   const [viewProduct, setViewProduct] = useState(null);
   const categories = ['Food Stuff', 'Snacks', 'Mobile', 'Clothes'];
@@ -43,6 +47,21 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("loggedInUser");
+    if (storedName) {
+      setUsername(storedName);
+    }
+  }, []);
+
+  useEffect(() => {
+  const user = localStorage.getItem("loggedInUser");
+  if (!user) {
+    router.push("/"); // redirect to login if not logged in
+  }
+}, []);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,6 +90,8 @@ export default function Home() {
     alert("Please select a file first.");
     return;
   }
+
+  const reader = new FileReader();
   
   reader.onload = (e) => {
     const data = new Uint8Array(e.target.result);
@@ -156,7 +177,9 @@ const handleDownloadFormat = () => {
       <main className="flex-1 p-6 md:ml-0">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <div>
-            <h1 className="text-2xl text-gray-400 font-bold mb-2">Welcome Back, Mustapha </h1>
+            <h1 className="text-2xl text-gray-400 font-bold mb-2">
+              Welcome Back, {username}
+            </h1>
             <p className="text-gray-600 text-lg">Manage your store inventory</p>
           </div>
           <div className="w-64 mx-4">
@@ -172,6 +195,15 @@ const handleDownloadFormat = () => {
           <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={() => setIsModalOpen(true)} >
             + Add Product
           </button>
+           <button
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                onClick={() => {
+                  localStorage.removeItem("loggedInUser"); // remove logged-in username
+                  router.push("welcome"); // redirect to login page
+                }}
+              >
+                Logout
+              </button>
         </div>
    <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-6">
   {filteredProducts
