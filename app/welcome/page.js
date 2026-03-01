@@ -59,7 +59,7 @@ export default function AuthPage() {
       // save logged-in username
       localStorage.setItem("loggedInUser", user.username);
       // redirect to inventory page
-      router.push("/iventory-application"); // make sure your inventory page route is correct
+      router.push("/inventory-application"); // make sure your inventory page route is correct
     }
   };
   return (
