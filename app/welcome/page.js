@@ -14,6 +14,7 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
   const router = useRouter();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isSignup) {
@@ -38,12 +39,11 @@ export default function AuthPage() {
       const newUser = { username, email, password };
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
-      toast.success("Registration successful! Please login");
-      setIsSignup(false);
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      setRePassword('');
+      toast.success("Registration successful!");
+
+      localStorage.setItem("loggedInUser", username);
+
+      router.push("/");
     } else {
       // ✅ LOGIN FLOW
       if (!email || !password) {

@@ -1,4 +1,5 @@
-export default function Header({username, setIsModalOpen, searchQuery, setSearchQuery}) {
+
+export default function Header({username, setIsModalOpen, searchQuery, setSearchQuery, router}) {
     return (
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div>

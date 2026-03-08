@@ -38,7 +38,7 @@ export function InventoryApplication() {
   const savedProducts = localStorage.getItem("products");
   return savedProducts ? JSON.parse(savedProducts) : [];
 });
-  /* ✅ LOAD PRODUCTS ONCE */
+  /*  LOAD PRODUCTS ONCE */
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -48,13 +48,13 @@ export function InventoryApplication() {
     }
   }, []);
 
-  /* ✅ SAVE PRODUCTS WHEN THEY CHANGE */
+  /*  SAVE PRODUCTS WHEN THEY CHANGE */
   useEffect(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  /* ✅ AUTH CHECK */
+  /*  AUTH CHECK */
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -152,7 +152,7 @@ export function InventoryApplication() {
     setProducts(products.filter(p => p.id !== id));
   };
 
-  /* 🔴 IMPORTANT: LOGOUT MUST NOT TOUCH PRODUCTS */
+  /* IMPORTANT: LOGOUT MUST NOT TOUCH PRODUCTS */
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     router.push("/welcome");
@@ -173,7 +173,7 @@ export function InventoryApplication() {
       <main className="flex-1 p-6 md:ml-0">
 
         {/* HEADER */}
-        <Header username={username} setIsModalOpen={setIsModalOpen} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <Header username={username} setIsModalOpen={setIsModalOpen} searchQuery={searchQuery} setSearchQuery={setSearchQuery}  router={router}/>
         
         {/* PRODUCTS */}
         <Products filteredProducts={filteredProducts} setViewProduct={setViewProduct} searchQuery={searchQuery} handleDelete={handleDelete} />
